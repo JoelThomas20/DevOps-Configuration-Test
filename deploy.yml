@@ -1,6 +1,6 @@
 ---
 - name: Ensure application is running on Kubernetes
-  hosts: localhost
+  hosts: eksserver
   tasks:
     - name: Check if application pods are running
       command: kubectl get pods -l app=digian
@@ -12,7 +12,7 @@
       when: pod_status.stdout.find("Running") == -1
 
     - name: Get the service status
-      command: kubectl get services
+      command: /root/bin/kubectl get services
       register: service_status
 
     - name: Fail if the service is not found
