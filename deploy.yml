@@ -1,0 +1,29 @@
+---
+- name: Ensure application is running on Kubernetes
+  hosts: localhost
+  tasks:
+    - name: Check if application pods are running
+      command: kubectl get pods -l app=digian
+      register: pod_status
+
+    - name: Fail if pods are not running
+      fail:
+        msg: "Pods are not running!"
+      when: pod_status.stdout.find("Running") == -1
+
+    - name: Get the service status
+      command: kubectl get services
+      register: service_status
+
+    - name: Fail if the service is not found
+      fail:
+        msg: "Service 'digian-service' not found!"
+      when: service_status.stdout.find("digian-service") == -1
+
+    - name: Output pod status
+      debug:
+        var: pod_status.stdout_lines
+
+    - name: Output service status
+      debug:
+        var: service_status.stdout_lines
